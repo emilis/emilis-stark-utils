@@ -1,0 +1,100 @@
+--- exports --------------------------------------------------------------------
+
+getByKey
+eqs
+eqa
+each
+eappend
+create
+replace
+fromHtml
+escape
+onHtml
+nextFrame
+
+--- livescript ----------------------------------------------------------------
+
+esc-div =               document.create-element 'div'
+
+function get-by-key
+
+    document.get-element-by-id do
+        Array.prototype.slice.call &
+            .join '-'
+
+function eqs el, q
+
+    q && el || document
+    |>( .query-selector q || el )
+
+
+function eqa el, q
+
+    Array.prototype.slice.call do
+        q && el || document
+        |>( .query-selector-all q || el )
+
+
+!function each el, q, fn
+
+    if  fn
+        next-frame !->
+            eqa el, q
+                .for-each fn
+    else
+        next-frame !->
+            eqa el
+                .for-each q
+
+
+function eappend el, content
+
+    if typeof content != 'undefined'
+        if content instanceof Element
+            el.append-child content
+        else if content instanceof Array
+            content.for-each eappend.bind @, el
+        else
+            el.inner-HTML += content
+    el
+
+
+function create name, attrs, content
+
+    el =    document.create-element name
+
+    if attrs
+        for k, v of attrs
+            el.set-attribute k, v
+
+    eappend el, content
+
+
+!function replace el, html
+
+    next-frame !->
+        el.parent-element.replace-child do
+            from-html html
+            el
+
+
+function from-html html
+
+    create 'div', null, html
+        .first-child
+
+
+function escape str
+
+    esc-div.text-content =  str
+    esc-div.inner-HTML
+
+
+function on-html fn
+
+    document.add-event-listener 'DOMContentLoaded', fn
+
+
+!function next-frame fn
+
+    window.request-animation-frame fn

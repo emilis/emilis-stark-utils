@@ -1,0 +1,30 @@
+{
+  "name": "emilis-stark-utils",
+  "version": "1.0.0",
+  "authors": [
+    "Emilis Dambauskas <emilis.d@gmail.com>"
+  ],
+  "description": "Utility components for use in Stark projects.",
+  "moduleType": [
+    "mpc"
+  ],
+  "keywords": [
+    "stark",
+    "web",
+    "components"
+  ],
+  "license": "GPLv3",
+  "homepage": "https://github.com/emilis/emilis-stark-utils",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lodash": "~3.10.0",
+    "eventEmitter": "~4.2.11",
+    "bluebird": "~2.9.32"
+  }
+}

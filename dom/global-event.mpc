@@ -1,0 +1,23 @@
+--- requirements --------------------------------------------------------------
+
+lodash/lodash
+
+--- exports -------------------------------------------------------------------
+
+register
+_template
+
+--- jst -----------------------------------------------------------------------
+
+window['<%= PATH %>']['<%= prefix %>']['<%= name %>'].apply(this,arguments)
+
+--- livescript ----------------------------------------------------------------
+
+window[PATH] =          {}
+
+_template =             _.template jst, imports: { PATH, CLASSNAME, SELECTOR }
+
+function register prefix, name, fn
+
+    window[PATH][prefix] ||=        {}
+    window[PATH][prefix][name] =    fn

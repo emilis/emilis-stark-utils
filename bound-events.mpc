@@ -1,0 +1,45 @@
+--- docs ----------------------------------------------------------------------
+
+Exports a function that takes an Array of strings for event names.
+
+The function returns an EventEmitter with the most useful methods bound to the
+instance and shorthands for emitting and subscribing to the predefined events:
+
+    var ee = boundEvents([ "add", "remove", "change" ]);
+
+    ee.on               /// function is bound to ee.
+    ee.off              /// function is bound to ee.
+    ...
+    ee.on.add           /// function exists and is bound to ee.
+    ...
+    ee.trigger.remove   /// function exists and is bound to ee.
+
+--- requirements --------------------------------------------------------------
+
+eventEmitter/EventEmitter
+
+--- livescript ----------------------------------------------------------------
+
+exports = ( names )->
+
+    names.reduce do
+
+        ( ee, name )->
+
+            ee
+                ..on[name] =        ..on.bind .. , name
+                ..off[name] =       ..off.bind .. , name
+                ..once[name] =      ..once.bind .. , name
+                ..emit[name] =      ..emit.bind .. , name
+                ..trigger[name] =   ..trigger.bind .. , name
+
+        do ->
+
+            new EventEmitter!
+                ..on =                  ..on.bind ..
+                ..off =                 ..off.bind ..
+                ..once =                ..once.bind ..
+                ..emit =                ..emit.bind ..
+                ..trigger =             ..trigger.bind ..
+
+

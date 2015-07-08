@@ -1,0 +1,50 @@
+--- requirements --------------------------------------------------------------
+
+bluebird/js/browser/bluebird
+
+--- exports --------------------------------------------------------------------
+
+GET
+POST
+
+--- livescript ----------------------------------------------------------------
+
+function GET url
+    new Promise ( resolve, reject )->
+
+        new XML-http-request
+            ..open 'GET', url, true
+            ..set-request-header 'Accept', 'application/json'
+            ..response-type =   'json'
+            ..timeout =         5e3
+            ..onloadend =       on-load resolve, reject
+            ..send!
+
+
+function POST url, record
+    new Promise ( resolve, reject )->
+
+        new XML-http-request
+            ..open 'POST', url, true
+            ..set-request-header 'Accept', 'application/json'
+            ..response-type =   'json'
+            ..onloadend =       on-load resolve, reject
+            ..send JSON.stringify record
+
+
+### Private functions ---------------------------------------------------------
+
+function on-load on-ok, on-error
+    ->
+
+        if @status < 400
+            if @response && typeof( @response ) === 'string'
+                on-ok JSON.parse @response
+            else
+                on-ok @response
+        else
+            on-error do
+                status:         @status
+                status-text:    @status-text
+                response:       @response
+                error:          @status-text

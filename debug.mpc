@@ -1,0 +1,33 @@
+--- requirements --------------------------------------------------------------------
+
+config
+
+--- exports --------------------------------------------------------------------
+
+DEBUG:              config.DEBUG
+debug
+warn
+getDebugger
+
+--- livescript ----------------------------------------------------------------
+
+window.onerror =    console.error.bind( console );
+
+### Functions -----------------------------------------------------------------
+
+!function debug
+
+    if config.DEBUG
+        console~log ...
+
+
+!function warn
+
+    if  config.DEBUG
+        console~warn ...
+
+
+function get-debugger prefix
+
+    debug.bind @, prefix
+

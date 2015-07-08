@@ -1,0 +1,41 @@
+--- requirements --------------------------------------------------------------
+
+Debug:                  ./debug
+
+--- exports -------------------------------------------------------------------
+
+shouldComponentUpdate
+
+--- livescript ----------------------------------------------------------------
+
+function should-component-update next-props, next-state
+
+    if  Debug.DEBUG
+        Debug.debug do
+            'should-component-update'
+            @props != next-props
+            get-obj-diff @props, next-props
+            @state != next-state
+            get-obj-diff @state, next-state
+            @constructor.display-name
+
+    if  @state != next-state
+        return true
+    else if @props != next-props
+        for k of @props
+            if  @props[k] != next-props[k]
+                return true
+    false
+
+
+function get-obj-diff obj1, obj2
+
+    keys =              []
+    for k of obj1
+        if obj1[k] != obj2[k]
+            keys.push k
+    keys.push '-|-'
+    for k of obj2
+        if obj1[k] != obj2[k]
+            keys.push k
+    keys
