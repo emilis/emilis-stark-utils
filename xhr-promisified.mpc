@@ -9,27 +9,43 @@ POST
 
 --- livescript ----------------------------------------------------------------
 
-function GET url
+function GET url, data
     new Promise ( resolve, reject )->
+
+        if  data
+            if  -1 == url.index-of '?'
+                url += '?' + obj-to-keys data
+            else
+                url += '&' + obj-to-keys data
+
+        callback =  on-load resolve, reject
 
         new XML-http-request
             ..open 'GET', url, true
             ..set-request-header 'Accept', 'application/json'
             ..response-type =   'json'
             ..timeout =         5e3
-            ..onloadend =       on-load resolve, reject
+            ..with-credentials= true
+            ..onabort =         callback
+            ..onloadend =       callback
+            ..ontimeout =       callback
             ..send!
 
 
-function POST url, record
+function POST url, data
     new Promise ( resolve, reject )->
+
+        callback =  on-load resolve, reject
 
         new XML-http-request
             ..open 'POST', url, true
             ..set-request-header 'Accept', 'application/json'
             ..response-type =   'json'
-            ..onloadend =       on-load resolve, reject
-            ..send JSON.stringify record
+            ..with-credentials= true
+            ..onabort =         callback
+            ..onloadend =       callback
+            ..ontimeout =       callback
+            ..send JSON.stringify data
 
 
 ### Private functions ---------------------------------------------------------
@@ -37,14 +53,29 @@ function POST url, record
 function on-load on-ok, on-error
     ->
 
-        if @status < 400
-            if @response && typeof( @response ) === 'string'
+        if  @status >= 200 and @status < 400
+            if  @response && typeof( @response ) === 'string'
                 on-ok JSON.parse @response
             else
                 on-ok @response
+        else if !@status
+            on-error do
+                status:         @status
+                status-text:    @status-text
+                response:       @response
+                error:          @status-text || 'Request abort or timeout.'
         else
             on-error do
                 status:         @status
                 status-text:    @status-text
                 response:       @response
                 error:          @status-text
+
+
+function obj-to-query obj
+
+    Object.keys obj
+        .map ( key )->
+            encode-URI-component( key ) + "=" + encode-URI-component( obj[key] )
+        .join '&'
+
